@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-  <title>Chickendrumsticks.net - cool stuff that I made</title>
+  <title>chickendrumsticks.net — cool stuff that I made</title>
   <meta name="description" content="Cool drawings and stuff like that.">
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -9,7 +9,7 @@
 </head>
 <body>
   <header>
-    <h1><a href="index.html">Chickendrumsticks.net - cool stuff that I made</a></h1>
+    <h1><a href="index.html">chickendrumsticks.net — cool stuff that I made</a></h1>
     <nav>
       <a class="btn" href="archive.html">Archive</a>
     </nav>
@@ -57,7 +57,7 @@
 
     function render(){
       const c = byId(currentId);
-      document.title = c.title + " — Chicken Drumsticks - cool stuff that I made.";
+      document.title = c.title + " — chickendrumsticks.net";
       document.getElementById("comicTitle").textContent = c.title;
 
       const img = document.getElementById("comicImg");
@@ -78,7 +78,18 @@
       document.getElementById("prevBtnBottom").disabled   = currentId === minId;
       document.getElementById("nextBtnBottom").disabled   = currentId === maxId;
       document.getElementById("latestBtnBottom").disabled = currentId === maxId;
+
+      // Random only makes sense with more than one comic
+      const onlyOne = ids.length <= 1;
+      document.getElementById("randomBtn").disabled       = onlyOne;
+      document.getElementById("randomBtnBottom").disabled = onlyOne;
     }
+
+    // Keyboard: left/right arrows flip through comics
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowLeft"  && currentId > minId) go(currentId - 1);
+      if (e.key === "ArrowRight" && currentId < maxId) go(currentId + 1);
+    });
 
     // TOP click handlers
     document.getElementById("firstBtn").onclick  = () => go(minId);
@@ -86,10 +97,14 @@
     document.getElementById("nextBtn").onclick   = () => go(currentId + 1);
     document.getElementById("latestBtn").onclick = () => go(maxId);
 
-    document.getElementById("randomBtn").onclick = () => {
-      const randomId = ids[Math.floor(Math.random() * ids.length)];
+    function goRandom(){
+      if (ids.length <= 1) return;              // nowhere else to go
+      const others = ids.filter(id => id !== currentId);
+      const randomId = others[Math.floor(Math.random() * others.length)];
       go(randomId);
-    };
+    }
+
+    document.getElementById("randomBtn").onclick = goRandom;
 
     // BOTTOM click handlers
     document.getElementById("firstBtnBottom").onclick  = () => go(minId);
@@ -97,10 +112,7 @@
     document.getElementById("nextBtnBottom").onclick   = () => go(currentId + 1);
     document.getElementById("latestBtnBottom").onclick = () => go(maxId);
 
-    document.getElementById("randomBtnBottom").onclick = () => {
-      const randomId = ids[Math.floor(Math.random() * ids.length)];
-      go(randomId);
-    };
+    document.getElementById("randomBtnBottom").onclick = goRandom;
 
     render();
   </script>
